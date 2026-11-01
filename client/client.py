@@ -7,7 +7,7 @@ from thrift.protocol import TBinaryProtocol
 
 from blackboard import BlackboardService
 
-SERVER_HOST = "192.168.178.169" # Replace with the correct IP
+SERVER_HOST = "" # Replace with the correct IP
 SERVER_PORT = "9090"
 
 def main():
