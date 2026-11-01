@@ -1,0 +1,67 @@
+{
+  "runtimeTarget": {
+    "name": ".NETCoreApp,Version=v10.0",
+    "signature": ""
+  },
+  "compilationOptions": {},
+  "targets": {
+    ".NETCoreApp,Version=v10.0": {
+      "Blackboard-Server/1.0.0": {
+        "dependencies": {
+          "ApacheThrift": "0.25.0"
+        },
+        "runtime": {
+          "Blackboard-Server.dll": {}
+        }
+      },
+      "ApacheThrift/0.25.0": {
+        "dependencies": {
+          "System.Net.Http.WinHttpHandler": "10.0.10"
+        },
+        "runtime": {
+          "lib/net10.0/Thrift.dll": {
+            "assemblyVersion": "0.25.0.0",
+            "fileVersion": "0.25.0.0"
+          }
+        }
+      },
+      "System.Net.Http.WinHttpHandler/10.0.10": {
+        "runtime": {
+          "lib/net10.0/System.Net.Http.WinHttpHandler.dll": {
+            "assemblyVersion": "10.0.0.10",
+            "fileVersion": "10.0.1026.32716"
+          }
+        },
+        "runtimeTargets": {
+          "runtimes/win/lib/net10.0/System.Net.Http.WinHttpHandler.dll": {
+            "rid": "win",
+            "assetType": "runtime",
+            "assemblyVersion": "10.0.0.10",
+            "fileVersion": "10.0.1026.32716"
+          }
+        }
+      }
+    }
+  },
+  "libraries": {
+    "Blackboard-Server/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "ApacheThrift/0.25.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-H5rbmwi4O9Onrk+19zzobHygx8xTxscayFOOjyiZhQAkjpndAaS1hBtM+X4QOzikh/kX4XFIUAfbVQMdafPIjQ==",
+      "path": "apachethrift/0.25.0",
+      "hashPath": "apachethrift.0.25.0.nupkg.sha512"
+    },
+    "System.Net.Http.WinHttpHandler/10.0.10": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-jS4VrIDnKAZMDmFFvQS2s9F5QLh0lz7oI0p+jVLOg8J6Nwgqsx3jEGF1UocpyRiVVzLMMs3m/D/nsqm4cpSn6Q==",
+      "path": "system.net.http.winhttphandler/10.0.10",
+      "hashPath": "system.net.http.winhttphandler.10.0.10.nupkg.sha512"
+    }
+  }
+}

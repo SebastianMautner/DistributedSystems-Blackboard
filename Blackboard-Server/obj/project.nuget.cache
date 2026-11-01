@@ -1,0 +1,11 @@
+{
+  "version": 2,
+  "dgSpecHash": "mXEICllHNpQ=",
+  "success": true,
+  "projectFilePath": "C:\\Users\\se\\Documents\\Programmierprojekte\\DistributedSystems\\sem1\\Blackboard-Server\\Blackboard-Server.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\se\\.nuget\\packages\\apachethrift\\0.25.0\\apachethrift.0.25.0.nupkg.sha512",
+    "C:\\Users\\se\\.nuget\\packages\\system.net.http.winhttphandler\\10.0.10\\system.net.http.winhttphandler.10.0.10.nupkg.sha512"
+  ],
+  "logs": []
+}
