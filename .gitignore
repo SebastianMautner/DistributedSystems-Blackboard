@@ -1,1 +1,3 @@
 /.vscode
+/client\gen-py\blackboard\__pycache__\*
+/Blackboard-Server\obj\Debug\*

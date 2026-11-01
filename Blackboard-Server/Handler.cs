@@ -35,5 +35,18 @@ public class Handler : BlackboardService.IAsync
         {
             return Task.FromResult(e.Message);
         }
-    }    
+    }
+
+    public Task<string> Del(string? key, CancellationToken c = new())
+    {
+        try {
+            if(key == null) throw new ArgumentException("Key cannot be null!");
+            bool success = board.TryRemove(key, out _);
+            return Task.FromResult(success ? "Entry successfully removed" : "Entry was not found!");
+        }
+        catch(ArgumentException e)
+        {
+            return Task.FromResult(e.Message);
+        }
+    }
 }

@@ -45,6 +45,8 @@ namespace @blackboard
 
       global::System.Threading.Tasks.Task<string> @Get(string? @key, CancellationToken cancellationToken = default);
 
+      global::System.Threading.Tasks.Task<string> Del(string? @key, CancellationToken cancellationToken = default);
+
     }
 
 
@@ -139,6 +141,46 @@ namespace @blackboard
         throw new TApplicationException(TApplicationException.ExceptionType.MissingResult, "Get failed: unknown result");
       }
 
+      public async global::System.Threading.Tasks.Task<string> Del(string? @key, CancellationToken cancellationToken = default)
+      {
+        await send_Del(@key, cancellationToken);
+        return await recv_Del(cancellationToken);
+      }
+
+      public async global::System.Threading.Tasks.Task send_Del(string? @key, CancellationToken cancellationToken = default)
+      {
+        await OutputProtocol.WriteMessageBeginAsync(new TMessage("Del", TMessageType.Call, SeqId), cancellationToken);
+        
+        var tmp8 = new InternalStructs.Del_args() {
+          Key = @key,
+        };
+        
+        await tmp8.WriteAsync(OutputProtocol, cancellationToken);
+        await OutputProtocol.WriteMessageEndAsync(cancellationToken);
+        await OutputProtocol.Transport.FlushAsync(cancellationToken);
+      }
+
+      public async global::System.Threading.Tasks.Task<string> recv_Del(CancellationToken cancellationToken = default)
+      {
+        
+        var tmp9 = await InputProtocol.ReadMessageBeginAsync(cancellationToken);
+        if (tmp9.Type == TMessageType.Exception)
+        {
+          var tmp10 = await TApplicationException.ReadAsync(InputProtocol, cancellationToken);
+          await InputProtocol.ReadMessageEndAsync(cancellationToken);
+          throw tmp10;
+        }
+
+        var tmp11 = new InternalStructs.Del_result();
+        await tmp11.ReadAsync(InputProtocol, cancellationToken);
+        await InputProtocol.ReadMessageEndAsync(cancellationToken);
+        if (tmp11.__isset.success)
+        {
+          return tmp11.Success!;
+        }
+        throw new TApplicationException(TApplicationException.ExceptionType.MissingResult, "Del failed: unknown result");
+      }
+
     }
 
     public class AsyncProcessor : ITAsyncProcessor
@@ -152,6 +194,7 @@ namespace @blackboard
         _logger = logger;
         processMap_["Put"] = Put_ProcessAsync;
         processMap_["Get"] = Get_ProcessAsync;
+        processMap_["Del"] = Del_ProcessAsync;
       }
 
       protected delegate global::System.Threading.Tasks.Task ProcessFunction(int seqid, TProtocol iprot, TProtocol oprot, CancellationToken cancellationToken);
@@ -195,30 +238,30 @@ namespace @blackboard
 
       public async global::System.Threading.Tasks.Task Put_ProcessAsync(int seqid, TProtocol iprot, TProtocol oprot, CancellationToken cancellationToken)
       {
-        var tmp8 = new InternalStructs.Put_args();
-        await tmp8.ReadAsync(iprot, cancellationToken);
+        var tmp12 = new InternalStructs.Put_args();
+        await tmp12.ReadAsync(iprot, cancellationToken);
         await iprot.ReadMessageEndAsync(cancellationToken);
-        var tmp9 = new InternalStructs.Put_result();
+        var tmp13 = new InternalStructs.Put_result();
         try
         {
-          tmp9.Success = await _iAsync.Put(tmp8.Key, tmp8.Value, cancellationToken);
+          tmp13.Success = await _iAsync.Put(tmp12.Key, tmp12.Value, cancellationToken);
           await oprot.WriteMessageBeginAsync(new TMessage("Put", TMessageType.Reply, seqid), cancellationToken); 
-          await tmp9.WriteAsync(oprot, cancellationToken);
+          await tmp13.WriteAsync(oprot, cancellationToken);
         }
         catch (TTransportException)
         {
           throw;
         }
-        catch (Exception tmp10)
+        catch (Exception tmp14)
         {
-          var tmp11 = $"Error occurred in {GetType().FullName}: {tmp10.Message}";
+          var tmp15 = $"Error occurred in {GetType().FullName}: {tmp14.Message}";
           if ((_logger != null) && _logger.IsEnabled(LogLevel.Error))
-            _logger.LogError("{Exception}, {Message}", tmp10, tmp11);
+            _logger.LogError("{Exception}, {Message}", tmp14, tmp15);
           else
-            Console.Error.WriteLine(tmp11);
-          var tmp12 = new TApplicationException(TApplicationException.ExceptionType.InternalError," Internal error.");
+            Console.Error.WriteLine(tmp15);
+          var tmp16 = new TApplicationException(TApplicationException.ExceptionType.InternalError," Internal error.");
           await oprot.WriteMessageBeginAsync(new TMessage("Put", TMessageType.Exception, seqid), cancellationToken);
-          await tmp12.WriteAsync(oprot, cancellationToken);
+          await tmp16.WriteAsync(oprot, cancellationToken);
         }
         await oprot.WriteMessageEndAsync(cancellationToken);
         await oprot.Transport.FlushAsync(cancellationToken);
@@ -226,30 +269,61 @@ namespace @blackboard
 
       public async global::System.Threading.Tasks.Task Get_ProcessAsync(int seqid, TProtocol iprot, TProtocol oprot, CancellationToken cancellationToken)
       {
-        var tmp13 = new InternalStructs.Get_args();
-        await tmp13.ReadAsync(iprot, cancellationToken);
+        var tmp17 = new InternalStructs.Get_args();
+        await tmp17.ReadAsync(iprot, cancellationToken);
         await iprot.ReadMessageEndAsync(cancellationToken);
-        var tmp14 = new InternalStructs.Get_result();
+        var tmp18 = new InternalStructs.Get_result();
         try
         {
-          tmp14.Success = await _iAsync.@Get(tmp13.Key, cancellationToken);
+          tmp18.Success = await _iAsync.@Get(tmp17.Key, cancellationToken);
           await oprot.WriteMessageBeginAsync(new TMessage("Get", TMessageType.Reply, seqid), cancellationToken); 
-          await tmp14.WriteAsync(oprot, cancellationToken);
+          await tmp18.WriteAsync(oprot, cancellationToken);
         }
         catch (TTransportException)
         {
           throw;
         }
-        catch (Exception tmp15)
+        catch (Exception tmp19)
         {
-          var tmp16 = $"Error occurred in {GetType().FullName}: {tmp15.Message}";
+          var tmp20 = $"Error occurred in {GetType().FullName}: {tmp19.Message}";
           if ((_logger != null) && _logger.IsEnabled(LogLevel.Error))
-            _logger.LogError("{Exception}, {Message}", tmp15, tmp16);
+            _logger.LogError("{Exception}, {Message}", tmp19, tmp20);
           else
-            Console.Error.WriteLine(tmp16);
-          var tmp17 = new TApplicationException(TApplicationException.ExceptionType.InternalError," Internal error.");
+            Console.Error.WriteLine(tmp20);
+          var tmp21 = new TApplicationException(TApplicationException.ExceptionType.InternalError," Internal error.");
           await oprot.WriteMessageBeginAsync(new TMessage("Get", TMessageType.Exception, seqid), cancellationToken);
-          await tmp17.WriteAsync(oprot, cancellationToken);
+          await tmp21.WriteAsync(oprot, cancellationToken);
+        }
+        await oprot.WriteMessageEndAsync(cancellationToken);
+        await oprot.Transport.FlushAsync(cancellationToken);
+      }
+
+      public async global::System.Threading.Tasks.Task Del_ProcessAsync(int seqid, TProtocol iprot, TProtocol oprot, CancellationToken cancellationToken)
+      {
+        var tmp22 = new InternalStructs.Del_args();
+        await tmp22.ReadAsync(iprot, cancellationToken);
+        await iprot.ReadMessageEndAsync(cancellationToken);
+        var tmp23 = new InternalStructs.Del_result();
+        try
+        {
+          tmp23.Success = await _iAsync.Del(tmp22.Key, cancellationToken);
+          await oprot.WriteMessageBeginAsync(new TMessage("Del", TMessageType.Reply, seqid), cancellationToken); 
+          await tmp23.WriteAsync(oprot, cancellationToken);
+        }
+        catch (TTransportException)
+        {
+          throw;
+        }
+        catch (Exception tmp24)
+        {
+          var tmp25 = $"Error occurred in {GetType().FullName}: {tmp24.Message}";
+          if ((_logger != null) && _logger.IsEnabled(LogLevel.Error))
+            _logger.LogError("{Exception}, {Message}", tmp24, tmp25);
+          else
+            Console.Error.WriteLine(tmp25);
+          var tmp26 = new TApplicationException(TApplicationException.ExceptionType.InternalError," Internal error.");
+          await oprot.WriteMessageBeginAsync(new TMessage("Del", TMessageType.Exception, seqid), cancellationToken);
+          await tmp26.WriteAsync(oprot, cancellationToken);
         }
         await oprot.WriteMessageEndAsync(cancellationToken);
         await oprot.Transport.FlushAsync(cancellationToken);
@@ -305,20 +379,20 @@ namespace @blackboard
 
         public Put_args DeepCopy()
         {
-          var tmp18 = new Put_args()
+          var tmp27 = new Put_args()
           {
           };
           if((Key != null) && __isset.@key)
           {
-            tmp18.Key = this.Key!;
+            tmp27.Key = this.Key!;
           }
-          tmp18.__isset.@key = this.__isset.@key;
+          tmp27.__isset.@key = this.__isset.@key;
           if((Value != null) && __isset.@value)
           {
-            tmp18.Value = this.Value!;
+            tmp27.Value = this.Value!;
           }
-          tmp18.__isset.@value = this.__isset.@value;
-          return tmp18;
+          tmp27.__isset.@value = this.__isset.@value;
+          return tmp27;
         }
 
         public async global::System.Threading.Tasks.Task ReadAsync(TProtocol iprot, CancellationToken cancellationToken)
@@ -379,25 +453,25 @@ namespace @blackboard
           oprot.IncrementRecursionDepth();
           try
           {
-            var tmp19 = new TStruct("Put_args");
-            await oprot.WriteStructBeginAsync(tmp19, cancellationToken);
+            var tmp28 = new TStruct("Put_args");
+            await oprot.WriteStructBeginAsync(tmp28, cancellationToken);
             #pragma warning disable IDE0017  // simplified init
-            var tmp20 = new TField();
+            var tmp29 = new TField();
             if((Key != null) && __isset.@key)
             {
-              tmp20.Name = "key";
-              tmp20.Type = TType.String;
-              tmp20.ID = 1;
-              await oprot.WriteFieldBeginAsync(tmp20, cancellationToken);
+              tmp29.Name = "key";
+              tmp29.Type = TType.String;
+              tmp29.ID = 1;
+              await oprot.WriteFieldBeginAsync(tmp29, cancellationToken);
               await oprot.WriteStringAsync(Key, cancellationToken);
               await oprot.WriteFieldEndAsync(cancellationToken);
             }
             if((Value != null) && __isset.@value)
             {
-              tmp20.Name = "value";
-              tmp20.Type = TType.String;
-              tmp20.ID = 2;
-              await oprot.WriteFieldBeginAsync(tmp20, cancellationToken);
+              tmp29.Name = "value";
+              tmp29.Type = TType.String;
+              tmp29.ID = 2;
+              await oprot.WriteFieldBeginAsync(tmp29, cancellationToken);
               await oprot.WriteStringAsync(Value, cancellationToken);
               await oprot.WriteFieldEndAsync(cancellationToken);
             }
@@ -436,22 +510,22 @@ namespace @blackboard
 
         public override string ToString()
         {
-          var tmp21 = new StringBuilder("Put_args(");
-          int tmp22 = 0;
+          var tmp30 = new StringBuilder("Put_args(");
+          int tmp31 = 0;
           if((Key != null) && __isset.@key)
           {
-            if(0 < tmp22++) { tmp21.Append(", "); }
-            tmp21.Append("Key: ");
-            Key.ToString(tmp21);
+            if(0 < tmp31++) { tmp30.Append(", "); }
+            tmp30.Append("Key: ");
+            Key.ToString(tmp30);
           }
           if((Value != null) && __isset.@value)
           {
-            if(0 < tmp22++) { tmp21.Append(", "); }
-            tmp21.Append("Value: ");
-            Value.ToString(tmp21);
+            if(0 < tmp31++) { tmp30.Append(", "); }
+            tmp30.Append("Value: ");
+            Value.ToString(tmp30);
           }
-          tmp21.Append(')');
-          return tmp21.ToString();
+          tmp30.Append(')');
+          return tmp30.ToString();
         }
       }
 
@@ -486,15 +560,15 @@ namespace @blackboard
 
         public Put_result DeepCopy()
         {
-          var tmp23 = new Put_result()
+          var tmp32 = new Put_result()
           {
           };
           if((Success != null) && __isset.@success)
           {
-            tmp23.Success = this.Success!;
+            tmp32.Success = this.Success!;
           }
-          tmp23.__isset.@success = this.__isset.@success;
-          return tmp23;
+          tmp32.__isset.@success = this.__isset.@success;
+          return tmp32;
         }
 
         public async global::System.Threading.Tasks.Task ReadAsync(TProtocol iprot, CancellationToken cancellationToken)
@@ -545,19 +619,19 @@ namespace @blackboard
           oprot.IncrementRecursionDepth();
           try
           {
-            var tmp24 = new TStruct("Put_result");
-            await oprot.WriteStructBeginAsync(tmp24, cancellationToken);
+            var tmp33 = new TStruct("Put_result");
+            await oprot.WriteStructBeginAsync(tmp33, cancellationToken);
             #pragma warning disable IDE0017  // simplified init
-            var tmp25 = new TField();
+            var tmp34 = new TField();
 
             if(this.__isset.@success)
             {
               if (Success != null)
               {
-                tmp25.Name = "Success";
-                tmp25.Type = TType.String;
-                tmp25.ID = 0;
-                await oprot.WriteFieldBeginAsync(tmp25, cancellationToken);
+                tmp34.Name = "Success";
+                tmp34.Type = TType.String;
+                tmp34.ID = 0;
+                await oprot.WriteFieldBeginAsync(tmp34, cancellationToken);
                 await oprot.WriteStringAsync(Success, cancellationToken);
                 await oprot.WriteFieldEndAsync(cancellationToken);
               }
@@ -592,16 +666,16 @@ namespace @blackboard
 
         public override string ToString()
         {
-          var tmp26 = new StringBuilder("Put_result(");
-          int tmp27 = 0;
+          var tmp35 = new StringBuilder("Put_result(");
+          int tmp36 = 0;
           if((Success != null) && __isset.@success)
           {
-            if(0 < tmp27++) { tmp26.Append(", "); }
-            tmp26.Append("Success: ");
-            Success.ToString(tmp26);
+            if(0 < tmp36++) { tmp35.Append(", "); }
+            tmp35.Append("Success: ");
+            Success.ToString(tmp35);
           }
-          tmp26.Append(')');
-          return tmp26.ToString();
+          tmp35.Append(')');
+          return tmp35.ToString();
         }
       }
 
@@ -636,15 +710,15 @@ namespace @blackboard
 
         public Get_args DeepCopy()
         {
-          var tmp28 = new Get_args()
+          var tmp37 = new Get_args()
           {
           };
           if((Key != null) && __isset.@key)
           {
-            tmp28.Key = this.Key!;
+            tmp37.Key = this.Key!;
           }
-          tmp28.__isset.@key = this.__isset.@key;
-          return tmp28;
+          tmp37.__isset.@key = this.__isset.@key;
+          return tmp37;
         }
 
         public async global::System.Threading.Tasks.Task ReadAsync(TProtocol iprot, CancellationToken cancellationToken)
@@ -695,16 +769,16 @@ namespace @blackboard
           oprot.IncrementRecursionDepth();
           try
           {
-            var tmp29 = new TStruct("Get_args");
-            await oprot.WriteStructBeginAsync(tmp29, cancellationToken);
+            var tmp38 = new TStruct("Get_args");
+            await oprot.WriteStructBeginAsync(tmp38, cancellationToken);
             #pragma warning disable IDE0017  // simplified init
-            var tmp30 = new TField();
+            var tmp39 = new TField();
             if((Key != null) && __isset.@key)
             {
-              tmp30.Name = "key";
-              tmp30.Type = TType.String;
-              tmp30.ID = 1;
-              await oprot.WriteFieldBeginAsync(tmp30, cancellationToken);
+              tmp39.Name = "key";
+              tmp39.Type = TType.String;
+              tmp39.ID = 1;
+              await oprot.WriteFieldBeginAsync(tmp39, cancellationToken);
               await oprot.WriteStringAsync(Key, cancellationToken);
               await oprot.WriteFieldEndAsync(cancellationToken);
             }
@@ -738,16 +812,16 @@ namespace @blackboard
 
         public override string ToString()
         {
-          var tmp31 = new StringBuilder("Get_args(");
-          int tmp32 = 0;
+          var tmp40 = new StringBuilder("Get_args(");
+          int tmp41 = 0;
           if((Key != null) && __isset.@key)
           {
-            if(0 < tmp32++) { tmp31.Append(", "); }
-            tmp31.Append("Key: ");
-            Key.ToString(tmp31);
+            if(0 < tmp41++) { tmp40.Append(", "); }
+            tmp40.Append("Key: ");
+            Key.ToString(tmp40);
           }
-          tmp31.Append(')');
-          return tmp31.ToString();
+          tmp40.Append(')');
+          return tmp40.ToString();
         }
       }
 
@@ -782,15 +856,15 @@ namespace @blackboard
 
         public Get_result DeepCopy()
         {
-          var tmp33 = new Get_result()
+          var tmp42 = new Get_result()
           {
           };
           if((Success != null) && __isset.@success)
           {
-            tmp33.Success = this.Success!;
+            tmp42.Success = this.Success!;
           }
-          tmp33.__isset.@success = this.__isset.@success;
-          return tmp33;
+          tmp42.__isset.@success = this.__isset.@success;
+          return tmp42;
         }
 
         public async global::System.Threading.Tasks.Task ReadAsync(TProtocol iprot, CancellationToken cancellationToken)
@@ -841,19 +915,19 @@ namespace @blackboard
           oprot.IncrementRecursionDepth();
           try
           {
-            var tmp34 = new TStruct("Get_result");
-            await oprot.WriteStructBeginAsync(tmp34, cancellationToken);
+            var tmp43 = new TStruct("Get_result");
+            await oprot.WriteStructBeginAsync(tmp43, cancellationToken);
             #pragma warning disable IDE0017  // simplified init
-            var tmp35 = new TField();
+            var tmp44 = new TField();
 
             if(this.__isset.@success)
             {
               if (Success != null)
               {
-                tmp35.Name = "Success";
-                tmp35.Type = TType.String;
-                tmp35.ID = 0;
-                await oprot.WriteFieldBeginAsync(tmp35, cancellationToken);
+                tmp44.Name = "Success";
+                tmp44.Type = TType.String;
+                tmp44.ID = 0;
+                await oprot.WriteFieldBeginAsync(tmp44, cancellationToken);
                 await oprot.WriteStringAsync(Success, cancellationToken);
                 await oprot.WriteFieldEndAsync(cancellationToken);
               }
@@ -888,16 +962,312 @@ namespace @blackboard
 
         public override string ToString()
         {
-          var tmp36 = new StringBuilder("Get_result(");
-          int tmp37 = 0;
+          var tmp45 = new StringBuilder("Get_result(");
+          int tmp46 = 0;
           if((Success != null) && __isset.@success)
           {
-            if(0 < tmp37++) { tmp36.Append(", "); }
-            tmp36.Append("Success: ");
-            Success.ToString(tmp36);
+            if(0 < tmp46++) { tmp45.Append(", "); }
+            tmp45.Append("Success: ");
+            Success.ToString(tmp45);
           }
-          tmp36.Append(')');
-          return tmp36.ToString();
+          tmp45.Append(')');
+          return tmp45.ToString();
+        }
+      }
+
+
+      public partial class Del_args : TBase
+      {
+        private string? _key;
+
+        public string? Key
+        {
+          get
+          {
+            return _key;
+          }
+          set
+          {
+            __isset.@key = true;
+            this._key = value;
+          }
+        }
+
+
+        public Isset __isset;
+        public struct Isset
+        {
+          public bool @key;
+        }
+
+        public Del_args()
+        {
+        }
+
+        public Del_args DeepCopy()
+        {
+          var tmp47 = new Del_args()
+          {
+          };
+          if((Key != null) && __isset.@key)
+          {
+            tmp47.Key = this.Key!;
+          }
+          tmp47.__isset.@key = this.__isset.@key;
+          return tmp47;
+        }
+
+        public async global::System.Threading.Tasks.Task ReadAsync(TProtocol iprot, CancellationToken cancellationToken)
+        {
+          iprot.IncrementRecursionDepth();
+          try
+          {
+            TField field;
+            await iprot.ReadStructBeginAsync(cancellationToken);
+            while (true)
+            {
+              field = await iprot.ReadFieldBeginAsync(cancellationToken);
+              if (field.Type == TType.Stop)
+              {
+                break;
+              }
+
+              switch (field.ID)
+              {
+                case 1:
+                  if (field.Type == TType.String)
+                  {
+                    Key = await iprot.ReadStringAsync(cancellationToken);
+                  }
+                  else
+                  {
+                    await TProtocolUtil.SkipAsync(iprot, field.Type, cancellationToken);
+                  }
+                  break;
+                default: 
+                  await TProtocolUtil.SkipAsync(iprot, field.Type, cancellationToken);
+                  break;
+              }
+
+              await iprot.ReadFieldEndAsync(cancellationToken);
+            }
+
+            await iprot.ReadStructEndAsync(cancellationToken);
+          }
+          finally
+          {
+            iprot.DecrementRecursionDepth();
+          }
+        }
+
+        public async global::System.Threading.Tasks.Task WriteAsync(TProtocol oprot, CancellationToken cancellationToken)
+        {
+          oprot.IncrementRecursionDepth();
+          try
+          {
+            var tmp48 = new TStruct("Del_args");
+            await oprot.WriteStructBeginAsync(tmp48, cancellationToken);
+            #pragma warning disable IDE0017  // simplified init
+            var tmp49 = new TField();
+            if((Key != null) && __isset.@key)
+            {
+              tmp49.Name = "key";
+              tmp49.Type = TType.String;
+              tmp49.ID = 1;
+              await oprot.WriteFieldBeginAsync(tmp49, cancellationToken);
+              await oprot.WriteStringAsync(Key, cancellationToken);
+              await oprot.WriteFieldEndAsync(cancellationToken);
+            }
+            #pragma warning restore IDE0017  // simplified init
+            await oprot.WriteFieldStopAsync(cancellationToken);
+            await oprot.WriteStructEndAsync(cancellationToken);
+          }
+          finally
+          {
+            oprot.DecrementRecursionDepth();
+          }
+        }
+
+        public override bool Equals(object? that)
+        {
+          if (that is not Del_args other) return false;
+          if (ReferenceEquals(this, other)) return true;
+          return ((__isset.@key == other.__isset.@key) && ((!__isset.@key) || (global::System.Object.Equals(Key, other.Key))));
+        }
+
+        public override int GetHashCode() {
+          int hashcode = 157;
+          unchecked {
+            if((Key != null) && __isset.@key)
+            {
+              hashcode = (hashcode * 397) + Key.GetHashCode();
+            }
+          }
+          return hashcode;
+        }
+
+        public override string ToString()
+        {
+          var tmp50 = new StringBuilder("Del_args(");
+          int tmp51 = 0;
+          if((Key != null) && __isset.@key)
+          {
+            if(0 < tmp51++) { tmp50.Append(", "); }
+            tmp50.Append("Key: ");
+            Key.ToString(tmp50);
+          }
+          tmp50.Append(')');
+          return tmp50.ToString();
+        }
+      }
+
+
+      public partial class Del_result : TBase
+      {
+        private string? _success;
+
+        public string? Success
+        {
+          get
+          {
+            return _success;
+          }
+          set
+          {
+            __isset.@success = true;
+            this._success = value;
+          }
+        }
+
+
+        public Isset __isset;
+        public struct Isset
+        {
+          public bool @success;
+        }
+
+        public Del_result()
+        {
+        }
+
+        public Del_result DeepCopy()
+        {
+          var tmp52 = new Del_result()
+          {
+          };
+          if((Success != null) && __isset.@success)
+          {
+            tmp52.Success = this.Success!;
+          }
+          tmp52.__isset.@success = this.__isset.@success;
+          return tmp52;
+        }
+
+        public async global::System.Threading.Tasks.Task ReadAsync(TProtocol iprot, CancellationToken cancellationToken)
+        {
+          iprot.IncrementRecursionDepth();
+          try
+          {
+            TField field;
+            await iprot.ReadStructBeginAsync(cancellationToken);
+            while (true)
+            {
+              field = await iprot.ReadFieldBeginAsync(cancellationToken);
+              if (field.Type == TType.Stop)
+              {
+                break;
+              }
+
+              switch (field.ID)
+              {
+                case 0:
+                  if (field.Type == TType.String)
+                  {
+                    Success = await iprot.ReadStringAsync(cancellationToken);
+                  }
+                  else
+                  {
+                    await TProtocolUtil.SkipAsync(iprot, field.Type, cancellationToken);
+                  }
+                  break;
+                default: 
+                  await TProtocolUtil.SkipAsync(iprot, field.Type, cancellationToken);
+                  break;
+              }
+
+              await iprot.ReadFieldEndAsync(cancellationToken);
+            }
+
+            await iprot.ReadStructEndAsync(cancellationToken);
+          }
+          finally
+          {
+            iprot.DecrementRecursionDepth();
+          }
+        }
+
+        public async global::System.Threading.Tasks.Task WriteAsync(TProtocol oprot, CancellationToken cancellationToken)
+        {
+          oprot.IncrementRecursionDepth();
+          try
+          {
+            var tmp53 = new TStruct("Del_result");
+            await oprot.WriteStructBeginAsync(tmp53, cancellationToken);
+            #pragma warning disable IDE0017  // simplified init
+            var tmp54 = new TField();
+
+            if(this.__isset.@success)
+            {
+              if (Success != null)
+              {
+                tmp54.Name = "Success";
+                tmp54.Type = TType.String;
+                tmp54.ID = 0;
+                await oprot.WriteFieldBeginAsync(tmp54, cancellationToken);
+                await oprot.WriteStringAsync(Success, cancellationToken);
+                await oprot.WriteFieldEndAsync(cancellationToken);
+              }
+            }
+            #pragma warning restore IDE0017  // simplified init
+            await oprot.WriteFieldStopAsync(cancellationToken);
+            await oprot.WriteStructEndAsync(cancellationToken);
+          }
+          finally
+          {
+            oprot.DecrementRecursionDepth();
+          }
+        }
+
+        public override bool Equals(object? that)
+        {
+          if (that is not Del_result other) return false;
+          if (ReferenceEquals(this, other)) return true;
+          return ((__isset.@success == other.__isset.@success) && ((!__isset.@success) || (global::System.Object.Equals(Success, other.Success))));
+        }
+
+        public override int GetHashCode() {
+          int hashcode = 157;
+          unchecked {
+            if((Success != null) && __isset.@success)
+            {
+              hashcode = (hashcode * 397) + Success.GetHashCode();
+            }
+          }
+          return hashcode;
+        }
+
+        public override string ToString()
+        {
+          var tmp55 = new StringBuilder("Del_result(");
+          int tmp56 = 0;
+          if((Success != null) && __isset.@success)
+          {
+            if(0 < tmp56++) { tmp55.Append(", "); }
+            tmp55.Append("Success: ");
+            Success.ToString(tmp55);
+          }
+          tmp55.Append(')');
+          return tmp55.ToString();
         }
       }
 

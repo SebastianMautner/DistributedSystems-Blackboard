@@ -31,3 +31,4 @@ C:\Users\se\Documents\Programmierprojekte\DistributedSystems\sem1\Blackboard-Ser
 C:\Users\se\Documents\Programmierprojekte\DistributedSystems\sem1\Blackboard-Server\obj\Debug\net10.0\Blackboard-Server.pdb
 C:\Users\se\Documents\Programmierprojekte\DistributedSystems\sem1\Blackboard-Server\obj\Debug\net10.0\Blackboard-Server.genruntimeconfig.cache
 C:\Users\se\Documents\Programmierprojekte\DistributedSystems\sem1\Blackboard-Server\obj\Debug\net10.0\ref\Blackboard-Server.dll
+C:\Users\se\Documents\Programmierprojekte\DistributedSystems\sem1\Blackboard-Server\obj\Debug\net10.0\Blackboard-Server.sourcelink.json

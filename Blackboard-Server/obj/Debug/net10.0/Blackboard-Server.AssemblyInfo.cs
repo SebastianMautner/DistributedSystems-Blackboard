@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Blackboard-Server")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+b807d884eb39e435749170291043cb92171c4e01")]
 [assembly: System.Reflection.AssemblyProductAttribute("Blackboard-Server")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Blackboard-Server")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

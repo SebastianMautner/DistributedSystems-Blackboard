@@ -21,7 +21,7 @@ def main():
     key = sys.argv[2] if len(sys.argv) > 2 else None
     value = sys.argv[3] if len(sys.argv) > 3 else None
 
-    if method != "get" and method != "put":
+    if method != "get" and method != "put" and method != "del":
         print(f"{method} is not a valid method!")
         return 
 
@@ -31,8 +31,10 @@ def main():
         result = ""
         if method == "put":
             result = client.Put(key, value)
-        else:
+        elif method == "get":
             result = client.Get(key)
+        else:
+            result = client.Del(key)
         print(f"{result}")
 
     finally:
